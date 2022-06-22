@@ -14,6 +14,11 @@ The demo is demonstrating various components and how to combine those to build a
 
 ![Alt text](gorillacraft.jpg?raw=true "GorillaCraft")
 
+We decided to not set up a voxel terrain by mesh data, but instead by rendering virtual GPU instances of different cubes.
+Those cubes are stored as meshbuffer inside the GPU (static mesh) and getting rendered only by switching buffers, which is very fast.
+
+Selecting a cube or detecting Y position of a cube works by checking the height map and performing a virtual raytracing.
+
 ## Licensing
 The demo project is under Creative Commons license. Feel free to expand, fork or whatever.
 
