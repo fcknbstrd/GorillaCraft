@@ -1,6 +1,6 @@
 # GorillaCraft
 GorillaCraft is tutorial project for demostrating the usage of the Gorilla3D Delphi Firemonkey 3D addon for Delphi 10.1.1+
-It is based on Minecraft rendering a world of blocks as terrain, with a third person character in it.
+It is based on Minecraft, rendering a terrain of blocks by using instancing, with a third person character in it and some additional features like: shadow, water, particles and more.
 The demo is demonstrating various components and how to combine those to build a game like Minecraft.
 - TGorillaCube instancing
 - Materials like TGorillaLambertMaterialSource, TGorillaSharedAtlasMaterialSource, TGorillaWaterMaterialSource, ...
