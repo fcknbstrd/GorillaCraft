@@ -17,14 +17,20 @@ The demo is demonstrating various components and how to combine those to build a
 ## Licensing
 The demo project is under Creative Commons license. Feel free to expand, fork or whatever.
 
-Gorilla Software provides a free to download developer edition with watermarks and a commercial version.
+Gorilla Software provides a free to download developer edition with watermarks and a commercial version without watermarks.
 
 Read more about licensing here: https://docs.gorilla3d.de/0.8.4/pricing
+
+## Requirements
+- Delphi IDE 10.1.1+, f.e. 10.4.2 Community Edition: https://www.embarcadero.com/de/products/delphi/starter
+- Gorilla3D Firemonkey Addon
 
 ## Installation
 GorillaCraft __requires__ the Gorilla3D Delphi Firemonkey 3D addon for Delphi 10.1.1+.
 
 __NOTICE:__ For GorillaCraft the latest preview version **0.8.4.2314 is required**.
+
+__NOTICE:__ 0.8.4.2314 preview version is currently only available for 10.4.2, 11.0.0 and 11.1.0. For elder IDE versions, please contact us at: support[at]gorilla3d.de
 
 You can download the package manually or by our installer tool.
 
@@ -39,5 +45,13 @@ https://docs.gorilla3d.de/0.8.4/installation
 You can use the installer tool for automatic installation in Delphi IDE.
 https://www.gorilla3d.de/download/Gorilla3DInstaller.zip
 
-### The Project
+## The Project
 We would be glad if you participate in this project.
+
+### What has to be done
+- Adding / Removing blocks
+- More varying block types, plants, ...
+- Multiplayer Mode
+- Using TGorillaInventory
+- ParticleEffects
+- Saving / Loading Maps
