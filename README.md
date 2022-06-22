@@ -12,6 +12,8 @@ The demo is demonstrating various components and how to combine those to build a
 - Render passes like: Refraction, Reflection and ShadowMapping
 - ...
 
+![Alt text](gorillacraft.jpg?raw=true "GorillaCraft")
+
 ## Licensing
 The demo project is under Creative Commons license. Feel free to expand, fork or whatever.
 
