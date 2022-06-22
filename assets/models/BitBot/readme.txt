@@ -1,0 +1,2 @@
+https://sketchfab.com/3d-models/bitbot2-875fe7afd0024eafadeb0c73dc85d57b
+"Bit.Bot.2" (https://skfb.ly/6zPSK) by Studio.5 is licensed under Creative Commons Attribution-ShareAlike (http://creativecommons.org/licenses/by-sa/4.0/).
