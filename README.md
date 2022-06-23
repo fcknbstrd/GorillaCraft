@@ -1,5 +1,5 @@
 # GorillaCraft
-GorillaCraft is a tutorial project for demostrating the usage of the Gorilla3D Delphi Firemonkey 3D addon for Delphi 10.1.1+
+GorillaCraft is a tutorial project for demostrating the usage of the Gorilla3D Firemonkey 3D addon for Delphi 10.1.1+
 
 It is based on Minecraft and it's rendering a terrain of blocks by using cube instancing. You are walking through the world by a third person character, controlled by keyboard and mouse. Some additional features are supported, like: shadow, water, particles and more.
 
@@ -56,9 +56,11 @@ https://www.gorilla3d.de/download/Gorilla3DInstaller.zip
 We would be glad if you participate in this project.
 
 ### What has to be done
-- Adding / Removing blocks
-- More varying block types, plants, ...
+- Filling up block gaps
+- Removing blocks
+- Using TGorillaInventory for choosing block type
+- Placing plants and objects onto the map using B-channel of height map
 - Multiplayer Mode
-- Using TGorillaInventory
-- ParticleEffects
 - Saving / Loading Maps
+- ParticleEffects
+- Adding a startmenu with some options and settings
