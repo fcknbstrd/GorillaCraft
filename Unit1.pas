@@ -14,7 +14,8 @@ uses
   Gorilla.Sphere, Gorilla.Material.Lambert, Gorilla.Controller.Input.ThirdPerson,
   Gorilla.Model, Gorilla.AssetsManager, Gorilla.Animation.Controller,
   Gorilla.Plane, Gorilla.Material.Water, Gorilla.Controller.Passes.Refraction,
-  Gorilla.Controller.Passes.Reflection, Gorilla.SkyBox, Gorilla.Controller.Passes.SMStoreDepth;
+  Gorilla.Controller.Passes.Reflection, Gorilla.SkyBox, Gorilla.Controller.Passes.SMStoreDepth,
+  Gorilla.Utils.Inventory, Gorilla.UI.Inventory;
 
 const
   /// Height (from low to high) of the terrain
@@ -30,13 +31,17 @@ const
   /// Change this value, if you have more materials
   NUMBER_OF_BLOCKTYPES = 4;
 
+  /// Defines the max. number of object/plant types
+  /// Change this value, if you have more objects
+  NUMBER_OF_OBJECTS = 4;
+
   /// Defines the maximum distance for marking blocks.
   MAX_BLOCK_MARK_DISTANCE = 8;
 
 type
   PBlockType = ^TBlockType;
   TBlockType = record
-    Cube      : TGorillaCube;
+    Element   : TGorillaMesh;
     Instances : Integer;
   end;
 
@@ -71,7 +76,6 @@ type
     GorillaModel1: TGorillaModel;
     GorillaAssetsManager1: TGorillaAssetsManager;
     GorillaAnimationController1: TGorillaAnimationController;
-    StrokeCube1: TStrokeCube;
     WaterSurface: TGorillaPlane;
     GorillaWaterMaterialSource1: TGorillaWaterMaterialSource;
     GorillaRenderPassRefraction1: TGorillaRenderPassRefraction;
@@ -81,6 +85,13 @@ type
     GorillaLight2: TGorillaLight;
     GrassPlant: TGorillaPlane;
     GorillaAtlasMaterialSource5: TGorillaAtlasMaterialSource;
+    FlowerPlant: TGorillaPlane;
+    GorillaAtlasMaterialSource6: TGorillaAtlasMaterialSource;
+    MushroomPlant: TGorillaPlane;
+    GorillaAtlasMaterialSource7: TGorillaAtlasMaterialSource;
+    CactusPlant: TGorillaPlane;
+    GorillaAtlasMaterialSource8: TGorillaAtlasMaterialSource;
+    GorillaInventory1: TGorillaInventory;
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure GorillaThirdPersonController1Rotate(ASender: TObject;
@@ -92,13 +103,24 @@ type
       AState: TGorillaCharacterControllerState; AMode: TGorillaInputMode);
     procedure GorillaThirdPersonController1Jump(ASender: TObject;
       AState: TGorillaCharacterControllerState; AMode: TGorillaInputMode);
-    procedure GorillaViewport1Click(Sender: TObject);
+    procedure GorillaViewport1MouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Single);
+    procedure GorillaViewport1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Single);
   private
+    /// Saving mouse states for detecting if adding or removing block
+    FStoredShiftState: TShiftState;
+    /// Number of total blocks
     FBlockCount : Integer;
+    /// A list of all available types of blocks.
     FBlockTypes : TArray<TBlockType>;
+    /// The currently selected block with some further information.
     FSelectedBlock : TSelectedBlock;
+    /// A list of all available types of plants or objects.
+    FObjects : TArray<TBlockType>;
+    /// Last ripple coordinate to prevent from adding ripples every millisecond
     FLastRipple : TPoint3D;
-
+    /// The global shadow mapping render pass.
     GorillaShadowMappingPass1 : TGorillaRenderPassSMStoreDepth;
 
     /// <summary>
@@ -165,6 +187,8 @@ var
   I: Integer;
   LBmp : TGorillaBitmapPoolEntry;
 begin
+  Randomize();
+
   /// Modify fog color
   GorillaViewport1.FogColor := TAlphaColorF.Create(TAlphaColorRec.White);
 
@@ -172,17 +196,32 @@ begin
   MarkedBlock.SetOpacityValue(0.75);
 
   /// Register all cubes as types. If you add more, you have to extend this array
-  /// and change the NUMBER_OF_BLOCKTYPES value.
+  /// and change the NUMBER_OF_BLOCKTYPES value too.
   System.SetLength(FBlockTypes, NUMBER_OF_BLOCKTYPES);
-  FBlockTypes[0].Cube := WaterBlock;
-  FBlockTypes[1].Cube := GrassBlock;
-  FBlockTypes[2].Cube := DirtBlock;
-  FBlockTypes[3].Cube := StoneBlock;
+  FBlockTypes[0].Element := WaterBlock;
+  FBlockTypes[1].Element := GrassBlock;
+  FBlockTypes[2].Element := DirtBlock;
+  FBlockTypes[3].Element := StoneBlock;
 
-  /// Reset position to zero, because we only want the blocks to be at different
-  /// position at design time
+  /// Reset position blocks out of range, because we only want to see the blocks at design time
   for I := Low(FBlockTypes) to High(FBlockTypes) do
-    FBlockTypes[I].Cube.Position.Point := TPoint3D.Zero;
+    FBlockTypes[I].Element.Position.Y := 100;
+  MarkedBlock.Position.Y := 100;
+
+  /// Register all types of plants and objects. If you add more, you have to
+  /// expand this array and change NUMBER_OF_OBJECTS value too.
+  System.SetLength(FObjects, NUMBER_OF_OBJECTS);
+  FObjects[0].Element := GrassPlant;
+  FObjects[1].Element := FlowerPlant;
+  FObjects[2].Element := MushroomPlant;
+  FObjects[3].Element := CactusPlant;
+
+  /// Reset position objects out of range, because we only want to see the blocks at design time
+  for I := Low(FObjects) to High(FObjects) do
+  begin
+    FObjects[I].Element.Position.Y := 100;
+    FObjects[I].Element.SetHitTestValue(false);
+  end;
 
   /// After we have defined our material / block types, we can start building
   /// virtual instances from a height map.
@@ -203,7 +242,7 @@ begin
   /// Position set at the design time will be overwritten on startup
   GorillaCamera1.Position.Point := Point3D(0, -3.5, -5);
 
-  (*
+(*
   /// And increase the camera x-axis angle limit
   var LCtx : TRttiContext;
   var LType : TRttiInstanceType;
@@ -211,18 +250,21 @@ begin
   LType := LCtx.GetType(TGorillaThirdPersonController) as TRttiInstanceType;
   LFld := LType.GetField('FCameraXAngleLimit');
   LFld.SetValue(GorillaThirdPersonController1, TValue.From<TPointF>(PointF(-90, 90)));
-  *)
+*)
 
   /// Modify water shader foam texture
   LBmp := GorillaWaterMaterialSource1.FindBitmapEntryByName('WaterFoam');
   if Assigned(LBmp) then
+  begin
     LBmp.SetTextureMinMagFilter(TTextureFilter.Nearest, TTextureFilter.Nearest);
+  end;
 
   /// When we're ready with creating our world, we enable the input controlller,
   /// to allow movement by the GorillaFirstPersonController1.
   GorillaInputController1.Enabled := true;
 
   /// Initial character position on terrain
+  Self.GorillaThirdPersonController1.Position.Y := -100;
   Self.DoAdjustCharacterYPosition(TGorillaCharacterControllerHotKey.UnknownHotKey,
     TPoint3D.Zero);
 end;
@@ -385,6 +427,60 @@ begin
 end;
 
 procedure TForm1.BuildMap();
+
+  /// Randomly placing some plants and objects onto the blocks
+  /// We use a different random seed depending on the block type
+  /// So unterwater and on grass more plants are generated than on higher
+  /// block types.
+  procedure AddingObjectToBlock(AIdx : Integer; ATransf : TMatrix3D; var APixelColor : TAlphaColor);
+  var LSeed    : Integer;
+      LObjects : TArray<Integer>;
+      LObjIdx  : Integer;
+      LObjRef  : PBlockType;
+  begin
+    case AIdx of
+      0 : begin
+            // Underwater blocks only with grass plants
+            LSeed := 10;
+            LObjects := [0];
+          end;
+
+      1 : begin
+            // Grass blocks only with grass plants and flowers
+            LSeed := 10;
+            LObjects := [0,1];
+          end;
+
+      2 : begin
+            // Dirt blocks only with grass plants and mushrooms
+            LSeed := 20;
+            LObjects := [0,2];
+          end;
+
+      else
+        begin
+          // Stone blocks only with cactus plants
+          LSeed := 20;
+          LObjects := [3];
+        end;
+    end;
+
+    if (Random(LSeed) < 5) then
+    begin
+      /// Select a random object from available types
+      LObjIdx := LObjects[ Random(System.Length(LObjects)) ];
+      LObjRef := @FObjects[LObjIdx];
+
+      /// Store the object type in the Blue channel of the height map
+      TAlphaColorRec(APixelColor).B := LObjIdx;
+
+      /// Placing the object and rotate randomly around y-axis.
+      ATransf := TMatrix3D.CreateRotationY(DegToRad(Random(180))) *
+        ATransf * TMatrix3D.CreateTranslation(Point3D(0, -1, 0));
+      LObjRef^.Element.AddInstance(ATransf);
+    end;
+  end;
+
 var X, Y, Z : Integer;
     LYScale : Single;
     LWidth,
@@ -396,8 +492,8 @@ var X, Y, Z : Integer;
     LTerrainHeight,
     LLevels : Integer;
     LOfs    : TPoint3D;
-    LMat3D : TMatrix3D;
-    LData  : TBitmapData;
+    LMat3D  : TMatrix3D;
+    LData   : TBitmapData;
 begin
   /// Generate a height map to adjust cube instance to
   GenerateHeightMap();
@@ -446,19 +542,27 @@ begin
           /// Each instance needs its own absolute matrix information
           /// even if only the translation is interesting here.
           /// That's why we use the FBlockTypes[LIdx].AbsoluteMatrix as basis.
-          LMat3D := FBlockTypes[LIdx].Cube.AbsoluteMatrix * TMatrix3D.CreateTranslation(LOfs);
-          FBlockTypes[LIdx].Cube.AddInstance(LMat3D);
-
-          /// store block type in heightmap (G-Channel)
-          TAlphaColorRec(LPxlClr).G := LIdx;
-          LData.SetPixel(X, Z, LPxlClr);
+          LMat3D := TMatrix3D.CreateScaling(Point3D(1, 1, 1)) * TMatrix3D.CreateTranslation(LOfs);
+          FBlockTypes[LIdx].Element.AddInstance(LMat3D);
 
           /// Count instances for each blocktype, for raycasting in GorillaFirstPersonController1Rotate
           /// to detect which block is selected.
           Inc(FBlockTypes[LIdx].Instances);
 
-          /// just for some statistics, we count the blocks we're adding
+          /// Just for some statistics, we count the blocks we're adding
           Inc(FBlockCount);
+
+          /// Store block type in heightmap (G-Channel)
+          TAlphaColorRec(LPxlClr).G := LIdx;
+
+          /// Randomly placing some plants and objects onto the blocks
+          /// We use a different random seed depending on the block type
+          /// So unterwater and on grass more plants are generated than on higher
+          /// block types.
+          AddingObjectToBlock(LIdx, LMat3D, LPxlClr);
+
+          /// Finally we store the modified pixel color again
+          LData.SetPixel(X, Z, LPxlClr);
         end;
       end;
     finally
@@ -631,8 +735,8 @@ var LCamPos     : TPoint3D;
     LCamDir     : TPoint3D;
     LOfsDir     : TVector3D;
     I, B        : Integer;
-    LCube       : TGorillaCube;
-    LCubePos    : TPoint3D;
+    LBlock      : TGorillaMesh;
+    LBlockPos   : TPoint3D;
     LNear, LFar : TPoint3D;
     LIntersect  : Integer;
     LFound      : Boolean;
@@ -662,7 +766,7 @@ begin
   /// Iterate through all block types
   for I := Low(FBlockTypes) to High(FBlockTypes) do
   begin
-    LCube := FBlockTypes[I].Cube;
+    LBlock := FBlockTypes[I].Element;
 
     /// Iterate through all virtual instances of this specific block type.
     for B := 0 to FBlockTypes[I].Instances - 1 do
@@ -670,14 +774,14 @@ begin
       /// For fast computation, we only check the cubes, that are nearby.
       /// We have to extract translation from instance matrix to get virtual
       /// cube position
-      LCubePos := TTransformationMatrixUtils.GetTranslationFromTransformationMatrix(LCube.Instance[B]);
+      LBlockPos := TTransformationMatrixUtils.GetTranslationFromTransformationMatrix(LBlock.Instance[B]);
       /// If cube is more far away, skip it.
-      if (Abs(LCamPos.Distance(LCubePos)) > MAX_BLOCK_MARK_DISTANCE) then
+      if (Abs(LCamPos.Distance(LBlockPos)) > MAX_BLOCK_MARK_DISTANCE) then
         Continue;
 
       /// If this cube instance is nearby, we shall perform a raycast onto it,
       /// to check if camera view direction ray intersects with it.
-      LIntersect := RayCastCuboidIntersect(LCamPos, LCamDir, LCubePos, 1, 1, 1, LNear, LFar);
+      LIntersect := RayCastCuboidIntersect(LCamPos, LCamDir, LBlockPos, 1, 1, 1, LNear, LFar);
       if LIntersect <> 0 then
       begin
         /// We have found an intersected cube. We can stop searching for more.
@@ -685,11 +789,11 @@ begin
 
         /// Let's mark our block for selection.
         FSelectedBlock.BlockTypeRef := @FBlockTypes[I];
-        FSelectedBlock.Position := LCubePos;
+        FSelectedBlock.Position := LBlockPos;
         FSelectedBlock.Index := B;
-        FSelectedBlock.Coords := Self.DoRequest3DPos(LCubePos, false);
+        FSelectedBlock.Coords := Self.DoRequest3DPos(LBlockPos, false);
 
-        DoMarkBlock(LCubePos);
+        DoMarkBlock(LBlockPos);
         Break;
       end;
     end;
@@ -699,13 +803,29 @@ begin
   end;
 end;
 
-procedure TForm1.GorillaViewport1Click(Sender: TObject);
+procedure TForm1.GorillaViewport1MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+begin
+  FStoredShiftState := Shift;
+end;
+
+procedure TForm1.GorillaViewport1MouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Single);
 var LTransf : TMatrix3D;
     LData   : TBitmapData;
     LPxClr  : TAlphaColor;
+    LMode   : Integer;
     LLevels : Integer;
 begin
   if not Assigned(FSelectedBlock.BlockTypeRef) then
+    Exit;
+
+  /// Actions: LeftMouseClick == Add, RightMouseClick == Remove
+  if ssLeft in FStoredShiftState then
+    LMode := 1
+  else if ssRight in FStoredShiftState then
+    LMode := -1
+  else
     Exit;
 
   /// Modify height map value
@@ -718,9 +838,9 @@ begin
       if (TAlphaColorRec(LPxClr).R >= 255) then
         Exit;
 
-      LLevels := Ceil(MAX_COLOR_VALUE / TERRAIN_HEIGHT);
+      LLevels := Round(MAX_COLOR_VALUE / TERRAIN_HEIGHT);
 
-      TAlphaColorRec(LPxClr).R := Min(TAlphaColorRec(LPxClr).R + LLevels, 255);
+      TAlphaColorRec(LPxClr).R := Max(0, Min(TAlphaColorRec(LPxClr).R + LMode * LLevels, 255));
       LData.SetPixel(FSelectedBlock.Coords.X, FSelectedBlock.Coords.Y, LPxClr);
     finally
       HeightMapImage.Bitmap.Unmap(LData);
@@ -728,16 +848,18 @@ begin
   end;
 
   /// Modify block position
-  LTransf := FSelectedBlock.BlockTypeRef^.Cube.Instance[FSelectedBlock.Index];
-  LTransf := LTransf * TMatrix3D.CreateTranslation(Point3D(0, -1, 0));
-  FSelectedBlock.BlockTypeRef^.Cube.Instance[FSelectedBlock.Index] := LTransf;
+  LTransf := FSelectedBlock.BlockTypeRef^.Element.Instance[FSelectedBlock.Index];
+  LTransf := LTransf * TMatrix3D.CreateTranslation(Point3D(0, -LMode, 0));
+  FSelectedBlock.BlockTypeRef^.Element.Instance[FSelectedBlock.Index] := LTransf;
 
   /// Also move the marking block with the repositioned block
-  MarkedBlock.Position.Y := MarkedBlock.Position.Y - 1;
+  MarkedBlock.Position.Y := MarkedBlock.Position.Y - LMode;
 
   /// Adjust character if it stood onto of the cube.
   Self.DoAdjustCharacterYPosition(TGorillaCharacterControllerHotKey.UnknownHotKey,
     TPoint3D.Zero);
+
+  FStoredShiftState := [];
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
