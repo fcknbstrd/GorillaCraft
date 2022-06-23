@@ -139,6 +139,11 @@ type
     /// available blocks.
     /// </summary>
     procedure DoMarkBlock(APos : TPoint3D);
+    /// <summary>
+    /// In case of adding or removing blocks we need to adjust object's position on top,
+    /// otherwise they would fly in the air or would be inside of a block.
+    /// </summary>
+    procedure DoReplaceObjectAtBlockPos(APos : TPoint3D; AMode : Integer);
 
     /// <summary>
     /// Returns the platform dependent path to the assets directory.
@@ -394,7 +399,7 @@ begin
   GorillaModel1.SetHitTestValue(false);
 
   /// Start first animation it can find
-  GorillaModel1.AnimationManager.Current.Start();
+  GorillaModel1.AnimationManager.PlayAnimation('BitBot-idle.fbx');
 end;
 
 procedure TForm1.GenerateHeightMap();
@@ -525,19 +530,22 @@ begin
           /// Because it is black-and-white texture, we only need the RED channel.
           Y := TAlphaColorRec(LPxlClr).R;
 
-          /// get a ratio value for this pixel
+          /// Get a ratio value for this pixel
           LYScale := Y / MAX_COLOR_VALUE;
 
-          /// get the blocktype depending on the height value of the terrain
+          /// Get the blocktype depending on the height value of the terrain
           /// LLevels defines the steps in height for each block type, f.e.
           /// water = 0 - 63, stone = 64 - 127, ...
           /// By increasing NUMBER_OF_BLOCKTYPES and adding more, we can get more detail
           LIdx := Floor(Y / LLevels);
 
-          /// setup the position for the instance of the block type.
+          /// Setup the position for the instance of the block type.
           LOfs.X := -LHalfWidth + X;
           LOfs.Z := LHalfHeight - Z;
           LOfs.Y := (LTerrainHeight div 2) - Round(LTerrainHeight * LYScale);
+
+          /// Modify terrain value to level values
+          TAlphaColorRec(LPxlClr).R := Ceil( ((LTerrainHeight * LYScale) / LTerrainHeight) * MAX_COLOR_VALUE );
 
           /// Each instance needs its own absolute matrix information
           /// even if only the translation is interesting here.
@@ -693,6 +701,26 @@ begin
   MarkedBlock.Position.Point := APos;
 end;
 
+procedure TForm1.DoReplaceObjectAtBlockPos(APos : TPoint3D; AMode : Integer);
+var I, J : Integer;
+    LMat : TMatrix3D;
+    LObjPos : TPoint3D;
+begin
+  for I := Low(FObjects) to High(FObjects) do
+  begin
+    for J := 0 to FObjects[I].Instances - 1 do
+    begin
+      LMat := FObjects[I].Element.Instance[J] * TMatrix3D.CreateTranslation(Point3D(0, -AMode * 1, 0));
+      LObjPos := TTransformationMatrixUtils.GetTranslationFromTransformationMatrix(LMat);
+      if not LObjPos.EqualsTo(APos, 0.0001) then
+        Continue;
+
+      FObjects[I].Element.Instance[J] := LMat;
+      Exit;
+    end;
+  end;
+end;
+
 procedure TForm1.GorillaThirdPersonController1Idle(ASender: TObject;
   AState: TGorillaCharacterControllerState; AMode: TGorillaInputMode);
 begin
@@ -815,6 +843,7 @@ var LTransf : TMatrix3D;
     LData   : TBitmapData;
     LPxClr  : TAlphaColor;
     LMode   : Integer;
+    LIgnore : Boolean;
     LLevels : Integer;
 begin
   if not Assigned(FSelectedBlock.BlockTypeRef) then
@@ -834,8 +863,8 @@ begin
     try
       LPxClr := LData.GetPixel(FSelectedBlock.Coords.X, FSelectedBlock.Coords.Y);
 
-      /// We do not manipulate if we already reached the sky.
-      if (TAlphaColorRec(LPxClr).R >= 255) then
+      /// We do not move blocks upwards if we already reached the sky.
+      if (LMode >= 1) and (TAlphaColorRec(LPxClr).R >= 255) then
         Exit;
 
       LLevels := Round(MAX_COLOR_VALUE / TERRAIN_HEIGHT);
@@ -851,6 +880,9 @@ begin
   LTransf := FSelectedBlock.BlockTypeRef^.Element.Instance[FSelectedBlock.Index];
   LTransf := LTransf * TMatrix3D.CreateTranslation(Point3D(0, -LMode, 0));
   FSelectedBlock.BlockTypeRef^.Element.Instance[FSelectedBlock.Index] := LTransf;
+
+  /// Move an object, if it's on top of the block
+  DoReplaceObjectAtBlockPos(MarkedBlock.Position.Point, LMode);
 
   /// Also move the marking block with the repositioned block
   MarkedBlock.Position.Y := MarkedBlock.Position.Y - LMode;

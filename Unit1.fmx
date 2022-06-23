@@ -3489,7 +3489,7 @@ object Form1: TForm1
       Speed = 0.050000000745058060
       CrouchingSpeedReduction = 0.899999976158142100
       CrawlingSpeedReduction = 0.899999976158142100
-      RunningSpeedBoost = 2.000000000000000000
+      RunningSpeedBoost = 1.500000000000000000
       JumpingHeight = 2.000000000000000000
       CrouchingHeight = 0.500000000000000000
       CrawlingHeight = 0.250000000000000000
@@ -31312,7 +31312,423 @@ object Form1: TForm1
     Model = GorillaModel1
     Layers = <
       item
-        DisplayName = 'Walking'
+        DisplayName = 'WalkingToRun'
+        Transitions = <
+          item
+            DisplayName = 'walk-forward-to-run-left'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveLeft
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-forward.fbx'
+            AnimationTo = 'BitBot-run-left.fbx'
+          end
+          item
+            DisplayName = 'walk-forward-to-run-right'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveRight
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-forward.fbx'
+            AnimationTo = 'BitBot-run-right.fbx'
+          end
+          item
+            DisplayName = 'walk-forward-to-run-backward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveBackward
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-forward.fbx'
+            AnimationTo = 'BitBot-run-backward.fbx'
+          end
+          item
+            DisplayName = 'walk-forward-to-run-forward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveForward
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-forward.fbx'
+            AnimationTo = 'BitBot-run-forward.fbx'
+          end
+          item
+            DisplayName = 'walk-backward-to-run-left'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveLeft
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-backward.fbx'
+            AnimationTo = 'BitBot-run-left.fbx'
+          end
+          item
+            DisplayName = 'walk-backward-to-run-right'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveRight
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-backward.fbx'
+            AnimationTo = 'BitBot-run-right.fbx'
+          end
+          item
+            DisplayName = 'walk-backward-to-run-backward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveBackward
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-backward.fbx'
+            AnimationTo = 'BitBot-run-backward.fbx'
+          end
+          item
+            DisplayName = 'walk-backward-to-run-forward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveForward
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-backward.fbx'
+            AnimationTo = 'BitBot-run-forward.fbx'
+          end
+          item
+            DisplayName = 'walk-left-to-run-left'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveLeft
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-left.fbx'
+            AnimationTo = 'BitBot-run-left.fbx'
+          end
+          item
+            DisplayName = 'walk-left-to-run-right'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveRight
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-left.fbx'
+            AnimationTo = 'BitBot-run-right.fbx'
+          end
+          item
+            DisplayName = 'walk-left-to-run-backward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveBackward
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-left.fbx'
+            AnimationTo = 'BitBot-run-backward.fbx'
+          end
+          item
+            DisplayName = 'walk-left-to-run-forward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveForward
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-left.fbx'
+            AnimationTo = 'BitBot-run-forward.fbx'
+          end
+          item
+            DisplayName = 'walk-right-to-run-left'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveLeft
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-right.fbx'
+            AnimationTo = 'BitBot-run-left.fbx'
+          end
+          item
+            DisplayName = 'walk-right-to-run-right'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveRight
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-right.fbx'
+            AnimationTo = 'BitBot-run-right.fbx'
+          end
+          item
+            DisplayName = 'walk-right-to-run-backward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveBackward
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-right.fbx'
+            AnimationTo = 'BitBot-run-backward.fbx'
+          end
+          item
+            DisplayName = 'walk-right-to-run-forward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveForward
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-walk-right.fbx'
+            AnimationTo = 'BitBot-run-forward.fbx'
+          end>
+      end
+      item
+        DisplayName = 'IdleToRun'
+        Transitions = <
+          item
+            DisplayName = 'idle-to-run-forward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveForward
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-idle.fbx'
+            AnimationTo = 'BitBot-run-forward.fbx'
+          end
+          item
+            DisplayName = 'idle-to-run-left'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveLeft
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-idle.fbx'
+            AnimationTo = 'BitBot-run-left.fbx'
+          end
+          item
+            DisplayName = 'idle-to-run-right'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveRight
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-idle.fbx'
+            AnimationTo = 'BitBot-run-right.fbx'
+          end
+          item
+            DisplayName = 'idle-to-run-backward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = KeyboardMoveBackward
+            States = [fpMoving, fpBoost]
+            AnimationFrom = 'BitBot-idle.fbx'
+            AnimationTo = 'BitBot-run-backward.fbx'
+          end>
+      end
+      item
+        DisplayName = 'RunToWalk'
+        Transitions = <
+          item
+            DisplayName = 'run-forward-to-walk-forward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveForward
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-forward.fbx'
+            AnimationTo = 'BitBot-walk-forward.fbx'
+          end
+          item
+            DisplayName = 'run-forward-to-walk-backward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveBackward
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-forward.fbx'
+            AnimationTo = 'BitBot-walk-backward.fbx'
+          end
+          item
+            DisplayName = 'run-forward-to-walk-left'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveLeft
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-forward.fbx'
+            AnimationTo = 'BitBot-walk-left.fbx'
+          end
+          item
+            DisplayName = 'run-forward-to-walk-right'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveRight
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-forward.fbx'
+            AnimationTo = 'BitBot-walk-right.fbx'
+          end
+          item
+            DisplayName = 'run-backward-to-walk-forward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveForward
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-backward.fbx'
+            AnimationTo = 'BitBot-walk-forward.fbx'
+          end
+          item
+            DisplayName = 'run-backward-to-walk-backward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveBackward
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-backward.fbx'
+            AnimationTo = 'BitBot-walk-backward.fbx'
+          end
+          item
+            DisplayName = 'run-backward-to-walk-left'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveLeft
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-backward.fbx'
+            AnimationTo = 'BitBot-walk-left.fbx'
+          end
+          item
+            DisplayName = 'run-backward-to-walk-right'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveRight
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-backward.fbx'
+            AnimationTo = 'BitBot-walk-right.fbx'
+          end
+          item
+            DisplayName = 'run-left-to-walk-forward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveForward
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-left.fbx'
+            AnimationTo = 'BitBot-walk-forward.fbx'
+          end
+          item
+            DisplayName = 'run-left-to-walk-backward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveBackward
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-left.fbx'
+            AnimationTo = 'BitBot-walk-backward.fbx'
+          end
+          item
+            DisplayName = 'run-left-to-walk-left'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveLeft
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-left.fbx'
+            AnimationTo = 'BitBot-walk-left.fbx'
+          end
+          item
+            DisplayName = 'run-left-to-walk-right'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveRight
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-left.fbx'
+            AnimationTo = 'BitBot-walk-right.fbx'
+          end
+          item
+            DisplayName = 'run-right-to-walk-forward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveForward
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-right.fbx'
+            AnimationTo = 'BitBot-walk-forward.fbx'
+          end
+          item
+            DisplayName = 'run-right-to-walk-backward'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveBackward
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-right.fbx'
+            AnimationTo = 'BitBot-walk-backward.fbx'
+          end
+          item
+            DisplayName = 'run-right-to-walk-left'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveLeft
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-right.fbx'
+            AnimationTo = 'BitBot-walk-left.fbx'
+          end
+          item
+            DisplayName = 'run-right-to-walk-right'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmSequentially
+            Loop = True
+            HotKey = KeyboardMoveRight
+            States = [fpMoving]
+            AnimationFrom = 'BitBot-run-right.fbx'
+            AnimationTo = 'BitBot-walk-right.fbx'
+          end>
+      end
+      item
+        DisplayName = 'RunToIdle'
+        Transitions = <
+          item
+            DisplayName = 'run-forward-to-idle'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = UnknownHotKey
+            States = [fpIdle]
+            AnimationFrom = 'BitBot-run-forward.fbx'
+            AnimationTo = 'BitBot-idle.fbx'
+          end
+          item
+            DisplayName = 'run-left-to-idle'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = UnknownHotKey
+            States = [fpIdle]
+            AnimationFrom = 'BitBot-run-left.fbx'
+            AnimationTo = 'BitBot-idle.fbx'
+          end
+          item
+            DisplayName = 'run-right-to-idle'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = UnknownHotKey
+            States = [fpIdle]
+            AnimationFrom = 'BitBot-run-right.fbx'
+            AnimationTo = 'BitBot-idle.fbx'
+          end
+          item
+            DisplayName = 'run-backward-to-idle'
+            DetectionKind = tkHotKeyAndStates
+            Mode = tmImmediatly
+            Loop = True
+            HotKey = UnknownHotKey
+            States = [fpIdle]
+            AnimationFrom = 'BitBot-run-backward.fbx'
+            AnimationTo = 'BitBot-idle.fbx'
+          end>
+      end
+      item
+        DisplayName = 'IdleToWalk'
         Transitions = <
           item
             DisplayName = 'idle-to-walk-forward'
@@ -31353,14 +31769,18 @@ object Form1: TForm1
             States = [fpMoving]
             AnimationFrom = 'BitBot-idle.fbx'
             AnimationTo = 'BitBot-walk-backward.fbx'
-          end
+          end>
+      end
+      item
+        DisplayName = 'WalkToIdle'
+        Transitions = <
           item
             DisplayName = 'walk-forward-to-idle'
             DetectionKind = tkHotKeyAndStates
             Mode = tmImmediatly
             Loop = True
             HotKey = UnknownHotKey
-            States = []
+            States = [fpIdle]
             AnimationFrom = 'BitBot-walk-forward.fbx'
             AnimationTo = 'BitBot-idle.fbx'
           end
@@ -31370,7 +31790,7 @@ object Form1: TForm1
             Mode = tmImmediatly
             Loop = True
             HotKey = UnknownHotKey
-            States = []
+            States = [fpIdle]
             AnimationFrom = 'BitBot-walk-left.fbx'
             AnimationTo = 'BitBot-idle.fbx'
           end
@@ -31380,7 +31800,7 @@ object Form1: TForm1
             Mode = tmImmediatly
             Loop = True
             HotKey = UnknownHotKey
-            States = []
+            States = [fpIdle]
             AnimationFrom = 'BitBot-walk-right.fbx'
             AnimationTo = 'BitBot-idle.fbx'
           end
@@ -31390,10 +31810,14 @@ object Form1: TForm1
             Mode = tmImmediatly
             Loop = True
             HotKey = UnknownHotKey
-            States = []
+            States = [fpIdle]
             AnimationFrom = 'BitBot-walk-backward.fbx'
             AnimationTo = 'BitBot-idle.fbx'
-          end
+          end>
+      end
+      item
+        DisplayName = 'WalkToWalk'
+        Transitions = <
           item
             DisplayName = 'walk-forward-to-walk-left'
             DetectionKind = tkHotKeyAndStates
@@ -31513,134 +31937,6 @@ object Form1: TForm1
             States = [fpMoving]
             AnimationFrom = 'BitBot-walk-backward.fbx'
             AnimationTo = 'BitBot-walk-right.fbx'
-          end>
-      end
-      item
-        DisplayName = 'Running'
-        Transitions = <
-          item
-            DisplayName = 'idle-to-run-forward'
-            DetectionKind = tkHotKeyAndStates
-            Mode = tmImmediatly
-            Loop = True
-            HotKey = KeyboardMoveForward
-            States = [fpMoving, fpBoost]
-            AnimationFrom = 'BitBot-idle.fbx'
-            AnimationTo = 'BitBot-run-forward.fbx'
-          end
-          item
-            DisplayName = 'idle-to-run-left'
-            DetectionKind = tkHotKeyAndStates
-            Mode = tmImmediatly
-            Loop = True
-            HotKey = KeyboardMoveLeft
-            States = [fpMoving, fpBoost]
-            AnimationFrom = 'BitBot-idle.fbx'
-            AnimationTo = 'BitBot-run-left.fbx'
-          end
-          item
-            DisplayName = 'idle-to-run-right'
-            DetectionKind = tkHotKeyAndStates
-            Mode = tmImmediatly
-            Loop = True
-            HotKey = KeyboardMoveRight
-            States = [fpMoving, fpBoost]
-            AnimationFrom = 'BitBot-idle.fbx'
-            AnimationTo = 'BitBot-run-right.fbx'
-          end
-          item
-            DisplayName = 'idle-to-run-backward'
-            DetectionKind = tkHotKeyAndStates
-            Mode = tmImmediatly
-            Loop = True
-            HotKey = KeyboardMoveBackward
-            States = [fpMoving, fpBoost]
-            AnimationFrom = 'BitBot-idle.fbx'
-            AnimationTo = 'BitBot-run-backward.fbx'
-          end
-          item
-            DisplayName = 'run-forward-to-idle'
-            DetectionKind = tkHotKeyAndStates
-            Mode = tmImmediatly
-            Loop = True
-            HotKey = UnknownHotKey
-            States = [fpIdle]
-            AnimationFrom = 'BitBot-run-forward.fbx'
-            AnimationTo = 'BitBot-idle.fbx'
-          end
-          item
-            DisplayName = 'run-left-to-idle'
-            DetectionKind = tkHotKeyAndStates
-            Mode = tmImmediatly
-            Loop = True
-            HotKey = UnknownHotKey
-            States = [fpIdle]
-            AnimationFrom = 'BitBot-run-left.fbx'
-            AnimationTo = 'BitBot-idle.fbx'
-          end
-          item
-            DisplayName = 'run-right-to-idle'
-            DetectionKind = tkHotKeyAndStates
-            Mode = tmImmediatly
-            Loop = True
-            HotKey = UnknownHotKey
-            States = [fpIdle]
-            AnimationFrom = 'BitBot-run-right.fbx'
-            AnimationTo = 'BitBot-idle.fbx'
-          end
-          item
-            DisplayName = 'run-backward-to-idle'
-            DetectionKind = tkHotKeyAndStates
-            Mode = tmImmediatly
-            Loop = True
-            HotKey = UnknownHotKey
-            States = [fpIdle]
-            AnimationFrom = 'BitBot-run-backward.fbx'
-            AnimationTo = 'BitBot-idle.fbx'
-          end>
-      end
-      item
-        DisplayName = 'RunningWalking'
-        Transitions = <
-          item
-            DisplayName = 'walk-forward-to-run-left'
-            DetectionKind = tkHotKeyAndStates
-            Mode = tmImmediatly
-            Loop = True
-            HotKey = KeyboardMoveLeft
-            States = [fpMoving, fpBoost]
-            AnimationFrom = 'BitBot-walk-forward.fbx'
-            AnimationTo = 'BitBot-run-left.fbx'
-          end
-          item
-            DisplayName = 'walk-forward-to-run-right'
-            DetectionKind = tkHotKeyAndStates
-            Mode = tmImmediatly
-            Loop = True
-            HotKey = KeyboardMoveRight
-            States = [fpMoving, fpBoost]
-            AnimationFrom = 'BitBot-walk-forward.fbx'
-            AnimationTo = 'BitBot-run-right.fbx'
-          end
-          item
-            DisplayName = 'walk-forward-to-run-backward'
-            DetectionKind = tkHotKeyAndStates
-            Mode = tmImmediatly
-            Loop = True
-            HotKey = KeyboardMoveBackward
-            States = [fpMoving, fpBoost]
-            AnimationFrom = 'BitBot-walk-forward.fbx'
-            AnimationTo = 'BitBot-run-backward.fbx'
-          end
-          item
-            DisplayName = 'walk-forward-to-run-forward'
-            DetectionKind = tkHotKeyAndStates
-            Mode = tmImmediatly
-            Loop = True
-            HotKey = KeyboardMoveBackward
-            States = [fpMoving, fpBoost]
-            AnimationFrom = 'BitBot-walk-forward.fbx'
-            AnimationTo = 'BitBot-run-forward.fbx'
           end>
       end>
     Left = 152
