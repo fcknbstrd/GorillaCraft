@@ -79,6 +79,8 @@ type
     CharacterPosMarker: TCircle;
     GorillaSkyBox1: TGorillaSkyBox;
     GorillaLight2: TGorillaLight;
+    GrassPlant: TGorillaPlane;
+    GorillaAtlasMaterialSource5: TGorillaAtlasMaterialSource;
     procedure FormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure GorillaThirdPersonController1Rotate(ASender: TObject;
@@ -107,7 +109,8 @@ type
     /// <summary>
     /// Adjusts the character controller in Y position by calling DoRequest3DPos.
     /// </summary>
-    procedure DoAdjustCharacterYPosition(AKind: TGorillaCharacterControllerHotKey);
+    procedure DoAdjustCharacterYPosition(AKind: TGorillaCharacterControllerHotKey;
+      ADir: TPoint3D);
     /// <summary>
     /// Is getting called when GorillaThirdPersonController1Rotate detects a
     /// cube for marking. The method casts a ray in camera direction onto all
@@ -154,12 +157,13 @@ implementation
 {$R *.fmx}
 
 uses
-  System.Math,
+  System.Math, System.Rtti,
   Gorilla.FBX.Loader, Gorilla.Utils.Math, Gorilla.DefTypes, Gorilla.Material.Types;
 
 procedure TForm1.FormCreate(Sender: TObject);
 var
   I: Integer;
+  LBmp : TGorillaBitmapPoolEntry;
 begin
   /// Modify fog color
   GorillaViewport1.FogColor := TAlphaColorF.Create(TAlphaColorRec.White);
@@ -199,15 +203,28 @@ begin
   /// Position set at the design time will be overwritten on startup
   GorillaCamera1.Position.Point := Point3D(0, -3.5, -5);
 
+  (*
   /// And increase the camera x-axis angle limit
-  GorillaThirdPersonController1.CameraXAngleLimit := PointF(-90, 90);
+  var LCtx : TRttiContext;
+  var LType : TRttiInstanceType;
+  var LFld  : TRttiField;
+  LType := LCtx.GetType(TGorillaThirdPersonController) as TRttiInstanceType;
+  LFld := LType.GetField('FCameraXAngleLimit');
+  LFld.SetValue(GorillaThirdPersonController1, TValue.From<TPointF>(PointF(-90, 90)));
+  *)
+
+  /// Modify water shader foam texture
+  LBmp := GorillaWaterMaterialSource1.FindBitmapEntryByName('WaterFoam');
+  if Assigned(LBmp) then
+    LBmp.SetTextureMinMagFilter(TTextureFilter.Nearest, TTextureFilter.Nearest);
 
   /// When we're ready with creating our world, we enable the input controlller,
   /// to allow movement by the GorillaFirstPersonController1.
   GorillaInputController1.Enabled := true;
 
   /// Initial character position on terrain
-  Self.DoAdjustCharacterYPosition(TGorillaCharacterControllerHotKey.UnknownHotKey);
+  Self.DoAdjustCharacterYPosition(TGorillaCharacterControllerHotKey.UnknownHotKey,
+    TPoint3D.Zero);
 end;
 
 function TForm1.GetAssetsDirectory() : String;
@@ -510,8 +527,10 @@ begin
   end;
 end;
 
-procedure TForm1.DoAdjustCharacterYPosition(AKind: TGorillaCharacterControllerHotKey);
-var LCamPos   : TPoint3D;
+procedure TForm1.DoAdjustCharacterYPosition(AKind: TGorillaCharacterControllerHotKey;
+  ADir: TPoint3D);
+var LPrevPos,
+    LCamPos   : TPoint3D;
     LCoords   : TPoint;
     LWaterPos : TPoint3D;
 begin
@@ -519,8 +538,21 @@ begin
   /// This is done by transfering our 3D world position to the height map.
   /// After retrieving the correct pixel in height map, we need to transfer
   /// the height value back to a 3D world coordinate.
-  LCamPos := GorillaThirdPersonController1.Position.Point;
-  LCoords := DoRequest3DPos(LCamPos);
+  LCamPos  := GorillaThirdPersonController1.Position.Point;
+  LPrevPos := LCamPos;
+  LCoords  := DoRequest3DPos(LCamPos);
+
+  /// Do not adjust, if height difference is too large
+  /// We don't want the character to jump directly onto blocks in large height
+  if ((LCamPos.Y - LPrevPos.Y) < -1) then
+  begin
+    /// Handle it as some kind of wall and bounce off
+    ADir.Y := 0;
+    ADir := ADir * 0.5;
+    LCamPos := LPrevPos - ADir;
+  end;
+
+  /// Update third person controller position
   GorillaThirdPersonController1.Position.Point := LCamPos;
 
   /// We have to set the water reflection surface, by our current controller
@@ -576,7 +608,8 @@ begin
     Exit;
 
   /// After jumping, we shall adjust the y-position
-  DoAdjustCharacterYPosition(TGorillaCharacterControllerHotKey.UnknownHotKey);
+  DoAdjustCharacterYPosition(TGorillaCharacterControllerHotKey.UnknownHotKey,
+    TPoint3D.Zero);
 end;
 
 procedure TForm1.GorillaThirdPersonController1Move(ASender: TObject;
@@ -588,13 +621,15 @@ begin
     Exit;
 
   /// On moving the character we're adjusting the character y-position
-  DoAdjustCharacterYPosition(AKind);
+  DoAdjustCharacterYPosition(AKind, ADir);
 end;
 
 procedure TForm1.GorillaThirdPersonController1Rotate(ASender: TObject;
   ACurrentRotation, ANewRotation: TQuaternion3D; ADelta: TPointF);
 var LCamPos     : TPoint3D;
+    LDstPos     : TPoint3D;
     LCamDir     : TPoint3D;
+    LOfsDir     : TVector3D;
     I, B        : Integer;
     LCube       : TGorillaCube;
     LCubePos    : TPoint3D;
@@ -611,6 +646,14 @@ begin
   LCamDir := GetViewDirectionFromViewMatrix(
     GorillaViewport1.MainPassRenderer.SharedContext.CurrentCameraMatrix
     );
+
+  /// To allow some minimal user control of the viewdirection, we move the camera
+  /// direction a little bit sideways
+  LDstPos := LCamPos + LCamDir;
+  LOfsDir := TPoint3D.Zero;
+  LDstPos := LDstPos + LOfsDir.ToPoint3D();
+  LCamDir := (LCamPos - LDstPos).Normalize();
+//  Log.d('dir=(%n, %n, %n), delta=(%n, %n)', [LCamDir.X, LCamDir.Y, LCamDir.Z, ADelta.X, ADelta.Y]);
 
   /// Because the cubes are not a real 3D instance, we have to check all virtual
   /// cube instances of all block types.
@@ -675,7 +718,7 @@ begin
       if (TAlphaColorRec(LPxClr).R >= 255) then
         Exit;
 
-      LLevels := MAX_COLOR_VALUE div TERRAIN_HEIGHT;
+      LLevels := Ceil(MAX_COLOR_VALUE / TERRAIN_HEIGHT);
 
       TAlphaColorRec(LPxClr).R := Min(TAlphaColorRec(LPxClr).R + LLevels, 255);
       LData.SetPixel(FSelectedBlock.Coords.X, FSelectedBlock.Coords.Y, LPxClr);
@@ -693,7 +736,8 @@ begin
   MarkedBlock.Position.Y := MarkedBlock.Position.Y - 1;
 
   /// Adjust character if it stood onto of the cube.
-  Self.DoAdjustCharacterYPosition(TGorillaCharacterControllerHotKey.UnknownHotKey);
+  Self.DoAdjustCharacterYPosition(TGorillaCharacterControllerHotKey.UnknownHotKey,
+    TPoint3D.Zero);
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
