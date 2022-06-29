@@ -57,9 +57,7 @@ We would be glad if you participate in this project.
 
 ### What has to be done
 - Filling up block gaps
-- Removing blocks
 - Using TGorillaInventory for choosing block type
-- Placing plants and objects onto the map using B-channel of height map
 - Multiplayer Mode
 - Saving / Loading Maps
 - ParticleEffects
