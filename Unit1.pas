@@ -15,7 +15,7 @@ uses
   Gorilla.Model, Gorilla.AssetsManager, Gorilla.Animation.Controller,
   Gorilla.Plane, Gorilla.Material.Water, Gorilla.Controller.Passes.Refraction,
   Gorilla.Controller.Passes.Reflection, Gorilla.SkyBox, Gorilla.Controller.Passes.SMStoreDepth,
-  Gorilla.Utils.Inventory, Gorilla.UI.Inventory;
+  Gorilla.Utils.Inventory, Gorilla.UI.Inventory, Gorilla.Transform;
 
 const
   /// Height (from low to high) of the terrain
@@ -194,8 +194,12 @@ var
 begin
   Randomize();
 
+//  GorillaViewport1.GlobalIllumDetail := 5;
+//  GorillaViewport1.GlobalIllumSoftness := 3;
+//  GorillaViewport1.ShadowStrength := 1;
+
   /// Modify fog color
-  GorillaViewport1.FogColor := TAlphaColorF.Create(TAlphaColorRec.White);
+  GorillaViewport1.FogColorF := TAlphaColorF.Create(TAlphaColorRec.White);
 
   /// Our MarkedBlock shall be a little bit transparent
   MarkedBlock.SetOpacityValue(0.75);
@@ -237,8 +241,8 @@ begin
 
   /// Because our water-surface is using reflection and refraction render passes
   /// we need to adjust it to the water-surface position.
-  GorillaRenderPassRefraction1.SurfacePosition := WaterSurface.Position.Point;
-  GorillaRenderPassReflection1.MirrorPosition  := WaterSurface.Position.Point;
+  GorillaRenderPassRefraction1.SurfacePosition.Point := WaterSurface.Position.Point;
+  GorillaRenderPassReflection1.MirrorPosition.Point := WaterSurface.Position.Point;
 
   /// Create a shadow mapping render pass for shadow computation
   CreateShadowMapping();
@@ -671,7 +675,7 @@ begin
   /// position and the original water surface y-position
   LWaterPos := LCamPos;
   LWaterPos.Y := WaterSurface.Position.Y;
-  GorillaRenderPassReflection1.MirrorPosition := LWaterPos;
+  GorillaRenderPassReflection1.MirrorPosition.Point := LWaterPos;
 
   /// Position the map marker
   CharacterPosMarker.Position.Point := PointF(LCoords.X, LCoords.Y);

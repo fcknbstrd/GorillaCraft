@@ -4,6 +4,7 @@ object Form1: TForm1
   Caption = 'Form1'
   ClientHeight = 768
   ClientWidth = 1280
+  Position = Designed
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
@@ -22,7 +23,13 @@ object Form1: TForm1
     FogDensity = 0.001000000047497451
     FogStart = 5.000000000000000000
     FogEnd = 50.000000000000000000
+    FogColor = claBlack
     TranslucentSaturation = 1.500000000000000000
+    EmissiveBlur = 0
+    GlobalIllumDetail = 0
+    GlobalIllumSoftness = 1.000000000000000000
+    ShadowStrength = 0.400000005960464500
+    FXAA = 1
     Align = Client
     Camera = GorillaCamera1
     Color = claCornflowerblue
@@ -35,6 +42,8 @@ object Form1: TForm1
     OnMouseUp = GorillaViewport1MouseUp
     object GorillaSharedAtlasMaterialSource1: TGorillaSharedAtlasMaterialSource
       ShadingModel = smLambert
+      ShadingIntensity = 1.000000000000000000
+      Brightness = 1.000000000000000000
       MeasureTime = False
       Color = claWhite
       Diffuse = claWhite
@@ -3337,6 +3346,7 @@ object Form1: TForm1
       AtlasColCount = 16
       FrameWidth = 16
       FrameHeight = 16
+      LinearFiltering = True
       Left = 72
       Top = 32
     end
@@ -3346,6 +3356,8 @@ object Form1: TForm1
       Height = 1.000000000000000000
       Depth = 1.000000000000000000
       Opaque = True
+      FrustumCullingCheck = True
+      Instances = <>
       WrapMode = Original
       MaterialSource = GorillaAtlasMaterialSource1
       object GorillaAtlasMaterialSource1: TGorillaAtlasMaterialSource
@@ -3362,6 +3374,8 @@ object Form1: TForm1
       Height = 1.000000000000000000
       Depth = 1.000000000000000000
       Opaque = True
+      FrustumCullingCheck = True
+      Instances = <>
       WrapMode = Original
       MaterialSource = GorillaAtlasMaterialSource2
       object GorillaAtlasMaterialSource2: TGorillaAtlasMaterialSource
@@ -3378,6 +3392,8 @@ object Form1: TForm1
       Height = 1.000000000000000000
       Depth = 1.000000000000000000
       Opaque = True
+      FrustumCullingCheck = True
+      Instances = <>
       WrapMode = Original
       MaterialSource = GorillaAtlasMaterialSource3
       object GorillaAtlasMaterialSource3: TGorillaAtlasMaterialSource
@@ -3394,6 +3410,8 @@ object Form1: TForm1
       Height = 1.000000000000000000
       Depth = 1.000000000000000000
       Opaque = True
+      FrustumCullingCheck = True
+      Instances = <>
       WrapMode = Original
       MaterialSource = GorillaAtlasMaterialSource4
       object GorillaAtlasMaterialSource4: TGorillaAtlasMaterialSource
@@ -3431,10 +3449,14 @@ object Form1: TForm1
       Height = 1.014999985694885000
       Depth = 1.014999985694885000
       Opaque = True
+      FrustumCullingCheck = True
+      Instances = <>
       WrapMode = Original
       MaterialSource = GorillaLambertMaterialSource1
       object GorillaLambertMaterialSource1: TGorillaLambertMaterialSource
         ShadingModel = smLambert
+        ShadingIntensity = 1.000000000000000000
+        Brightness = 1.000000000000000000
         MeasureTime = False
         Color = claWhite
         Diffuse = claWhite
@@ -3486,7 +3508,9 @@ object Form1: TForm1
       LockYAxis = True
       LockZAxis = False
       MoveSideways = True
+      RotateOnSideways = False
       Speed = 0.050000000745058060
+      SidewayRotationSpeed = 1.000000000000000000
       CrouchingSpeedReduction = 0.899999976158142100
       CrawlingSpeedReduction = 0.899999976158142100
       RunningSpeedBoost = 1.500000000000000000
@@ -3535,7 +3559,12 @@ object Form1: TForm1
           Width = 1.000000000000000000
           Height = 1.000000000000000000
           Depth = 1.000000000000000000
+          Intensity = 1.000000000000000000
           ConstantAttenuation = 1.000000000000000000
+          ScatteringIntensity = 0.100000001490116100
+          ScatteringExposure = 0.003400000045076013
+          ScatteringDecay = 1.000000000000000000
+          ScatteringDensity = 0.839999973773956300
           Quanternion = '(-0.608761548995972,0,0,0.793353259563446)'
         end
       end
@@ -3544,6 +3573,8 @@ object Form1: TForm1
         Height = 1.000000000000000000
         Depth = 1.000000000000000000
         Opaque = True
+        FrustumCullingCheck = True
+        Instances = <>
         WrapMode = Original
       end
     end
@@ -3555,11 +3586,15 @@ object Form1: TForm1
       Height = 128.000000000000000000
       Depth = 1.000000000000000000
       Opaque = True
+      FrustumCullingCheck = True
+      Instances = <>
       WrapMode = Original
       MaterialSource = GorillaWaterMaterialSource1
       Quanternion = '(0.70710676908493,0,0,-0.70710676908493)'
       object GorillaWaterMaterialSource1: TGorillaWaterMaterialSource
         ShadingModel = smBlinnPhong
+        ShadingIntensity = 1.000000000000000000
+        Brightness = 1.000000000000000000
         MeasureTime = True
         Color = xFFDCE6F5
         Diffuse = xFFDCE6F5
@@ -30507,7 +30542,10 @@ object Form1: TForm1
       Depth = 128.000000000000000000
       Opaque = True
       TwoSide = True
+      FrustumCullingCheck = False
+      Instances = <>
       WrapMode = Original
+      Mode = ProceduralSkyBox
       AllowFog = True
       FrontSide.PNG = {
         89504E470D0A1A0A0000000D4948445200000020000000200806000000737A7A
@@ -30649,6 +30687,46 @@ object Form1: TForm1
         FED9380C4989E0670C78E1D4EA8F112CC765A19819E84649B2DD7C76199B9D2A
         AC3EB704FABCF27A019D26CCAB2FDDA124ACDE7EC249A44E8E807F215F62F1F4
         017E8C0000000049454E44AE426082}
+      CrescentMoon = 0.029999999329447750
+      Crescent = True
+      CrescentOfsX = -0.500000000000000000
+      MoonSurface = 0.500000000000000000
+      DepolarizationFactor = 0.009999999776482582
+      Diffuse = claWhite
+      Emissive = x003333FF
+      Luminance = 1.173499941825867000
+      MieCoefficient = 0.019099999219179150
+      MieDirectionalG = 0.792999982833862300
+      MieV = 4.041999816894531000
+      MieZenithLength = 1600.000000000000000000
+      MieKCoefficientX = 0.685999989509582500
+      MieKCoefficientY = 0.677999973297119100
+      MieKCoefficientZ = 0.666000008583068800
+      MieKCoefficientW = 1.000000000000000000
+      PrimariesA = 0.000000449999987495
+      PrimariesB = 0.000000549999981558
+      PrimariesC = 0.000000680000027842
+      NumMolecules = 2.542000071519731E25
+      Rayleigh = 6.769999980926514000
+      RayleighZenithLength = 1425.000000000000000000
+      RefractiveIndex = 1.000633001327515000
+      SunAngularDiameterDegrees = 0.100000001490116100
+      SunIntensityFactor = 2069.000000000000000000
+      SunIntensityFalloffSteepness = 2.259999990463257000
+      TonemapWeighting = 10.000000000000000000
+      Turbidity = 4.750000000000000000
+      Inclination = 0.400000005960464500
+      Azimuth = 0.219999998807907100
+      StarDensity = 100.000000000000000000
+      StarProbe = 0.899999976158142100
+      StarSize = 3.000000000000000000
+      StarSpark = 0.200000002980232200
+      StarBrightness = 3.000000000000000000
+      StarColor = claWhite
+      CloudColor = claWhite
+      CloudIterations = 4
+      CloudFrequency = 0.019999999552965160
+      CloudAmplitude = 4.000000000000000000
     end
     object GrassPlant: TGorillaPlane
       HitTest = False
@@ -30659,6 +30737,8 @@ object Form1: TForm1
       Depth = 1.000000000000000000
       Opaque = True
       TwoSide = True
+      FrustumCullingCheck = True
+      Instances = <>
       WrapMode = Original
       MaterialSource = GorillaAtlasMaterialSource5
       object GorillaAtlasMaterialSource5: TGorillaAtlasMaterialSource
@@ -30677,6 +30757,8 @@ object Form1: TForm1
       Depth = 1.000000000000000000
       Opaque = True
       TwoSide = True
+      FrustumCullingCheck = True
+      Instances = <>
       WrapMode = Original
       MaterialSource = GorillaAtlasMaterialSource6
       object GorillaAtlasMaterialSource6: TGorillaAtlasMaterialSource
@@ -30695,6 +30777,8 @@ object Form1: TForm1
       Depth = 1.000000000000000000
       Opaque = True
       TwoSide = True
+      FrustumCullingCheck = True
+      Instances = <>
       WrapMode = Original
       MaterialSource = GorillaAtlasMaterialSource7
       object GorillaAtlasMaterialSource7: TGorillaAtlasMaterialSource
@@ -30713,6 +30797,8 @@ object Form1: TForm1
       Depth = 1.000000000000000000
       Opaque = True
       TwoSide = True
+      FrustumCullingCheck = True
+      Instances = <>
       WrapMode = Original
       MaterialSource = GorillaAtlasMaterialSource8
       object GorillaAtlasMaterialSource8: TGorillaAtlasMaterialSource
@@ -30732,7 +30818,12 @@ object Form1: TForm1
       Width = 1.000000000000000000
       Height = 1.000000000000000000
       Depth = 1.000000000000000000
+      Intensity = 1.000000000000000000
       ConstantAttenuation = 1.000000000000000000
+      ScatteringIntensity = 0.100000001490116100
+      ScatteringExposure = 0.003400000045076013
+      ScatteringDecay = 1.000000000000000000
+      ScatteringDensity = 0.839999973773956300
     end
   end
   object Timer1: TTimer
@@ -30801,8 +30892,8 @@ object Form1: TForm1
       end
       item
         Name = 'KEY_JUMP'
-        TriggerOnActivate = False
-        TriggerOnDeactivate = True
+        TriggerOnActivate = True
+        TriggerOnDeactivate = False
         Combinations = <
           item
             Kind = Keyboard
@@ -31078,8 +31169,8 @@ object Form1: TForm1
       end
       item
         Name = 'GAMEPAD_JUMP'
-        TriggerOnActivate = False
-        TriggerOnDeactivate = True
+        TriggerOnActivate = True
+        TriggerOnDeactivate = False
         Combinations = <
           item
             Kind = GamePad
@@ -31966,8 +32057,6 @@ object Form1: TForm1
     ClippingEnabled = True
     Left = 744
     Top = 80
-    SurfacePositionPoint = '(0,0,0)'
-    SurfaceNormalVector = '(0,1,0)'
   end
   object GorillaRenderPassReflection1: TGorillaRenderPassReflection
     Enabled = True
@@ -31994,8 +32083,6 @@ object Form1: TForm1
     MirrorSize = 10.000000000000000000
     Left = 912
     Top = 80
-    MirrorPositionPoint = '(0,0,0)'
-    MirrorNormalVector = '(0,-1,0)'
   end
   object GorillaInventory1: TGorillaInventory
     ItemTemplates = <>
